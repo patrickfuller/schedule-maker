@@ -1,0 +1,140 @@
+% This is a LaTeX file containing the format for recruit schedule .pdfs. 
+% 
+% However, I've doctored the .tex reader a bit to work with the generated
+% Python data structures.
+%
+%  $(`name`) will place the recruit's name
+%  $(`slot_#`) where `#` is an int, will place the professor they're meeting
+%  $(`activity_#`), where `#` is 1 or 2, will place MRSEC or Student Panel
+% 
+% v1.0 - Peter Winter
+% v2.0 - Patrick Fuller, patrickfuller@gmail.com, 22 Oct 12
+
+\documentclass[7pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[scaled]{helvet}
+\renewcommand*\familydefault{\sfdefault} %% Only if the base font of the document is to be sans serif
+
+\usepackage{graphicx}
+
+\parindent=0.3in
+
+\usepackage[margin=0.2in,letterpaper]{geometry}
+
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+
+\fancyhead{} % Clear all header fields 
+\fancyhead[l]{\setlength{\unitlength}{1mm}
+\begin{picture}(0,38)
+\put(0,0){\includegraphics[height=73pt]{chbeheader.jpg}}% 
+\end{picture}}
+
+\fancyfoot[c]{\renewcommand{\footrulewidth}{0pt}} % Clear all footer fields 
+
+\headsep = 1.4in
+
+\begin{document}
+%egin{table}[c]{columns}
+\bf{Prospective Graduate Student Visit} 
+ 
+\bf{\emph{$(name)}} 
+ 
+\begin{tabular}[8cm]{ r   l }
+& \bf{Friday, February 3, 2012}  \\ 
+
+\hline
+\indent \indent \indent \indent  \indent \indent \indent \indent 8:15 am &Meet in hotel lobby for ride to campus \rule{0cm}{0.3cm}  \indent \indent \indent \indent \indent \indent \indent\\ 
+8:30 am &Breakfast in Cook 2058 \rule{0cm}{0.4cm}\\ 
+9:00-9:05 am& Meet Department Chair \rule{0cm}{0.4cm}\\ 
+
+&     \indent Professor and Chair Linda Broadbelt  \\ 
+
+9:05-9:20 am&Graduate Program Overview \rule{0cm}{0.4cm}\\ 
+
+     & \indent Professor Luis Amaral \rule{0cm}{0.4cm} \\ 
+
+9:20-10:00 am &Cutting Edge Research\\ 
+
+     & \indent Professor Josh Leonard \\ 
+
+         & \indent \indent \emph{Biotechnology} \rule{0cm}{0.4cm} \\ 
+
+     & \indent Professor Justin Notestein \\ 
+
+         & \indent \indent \emph{Chemicals and Materials}\\ 
+
+     
+10:00-10:10 am& Career Development \rule{0cm}{0.4cm}\\ 
+
+&     \indent Chris Evans \\ 
+
+&\indent \indent Teaching Apprenticeship Program \\ 
+
+10:15-10:40 am & $(slot_1) \rule{0cm}{0.4cm}\\ 
+
+10:45-11:10 am & $(slot_2) \rule{0cm}{0.4cm}\\ 
+
+11:15-11:40 am & $(slot_3) \rule{0cm}{0.4cm}\\ 
+
+11:45 am & Meet in Tech E133 to go to lunch \rule{0cm}{0.4cm}\\ 
+
+12:00-1:00 pm & Lunch \rule{0cm}{0.4cm}\\ 
+
+1:15-1:40 pm & $(slot_4) \rule{0cm}{0.4cm}\\ 
+
+ 1:45-2:10 pm & $(slot_5) \rule{0cm}{0.4cm}\\ 
+ 
+2:15-2:40 pm & $(slot_6) \rule{0cm}{0.4cm}\\ 
+
+2:15-2:40 pm & $(slot_7) \rule{0cm}{0.4cm}\\ 
+
+2:45-3:10 pm & $(activity_1) \rule{0cm}{0.4cm}\\ 
+
+3:15-3:40 pm & $(activity_2) \rule{0cm}{0.4cm}\\ 
+
+3:45-3:55 pm &Campus Programs\rule{0cm}{0.4cm}\\ 
+
+        &\indent CLIMB\\ 
+
+        3:55-4:05 pm &Research Collaboration in Tech L324\rule{0cm}{0.4cm}\\ 
+
+        &\indent Peter Winter\\ 
+
+        4:05-4:10 pm& Wrap-up in Tech E133\rule{0cm}{0.4cm}\\ 
+
+        &\indent Professor Luis Amaral\\ 
+
+        4:15 pm&Return to Hotel\rule{0cm}{0.4cm}\\ 
+
+        5:45 pm&Meet in hotel lobby to go to Prairie Moon\rule{0cm}{0.4cm}\\ 
+
+        6:00 pm&Reception and dinner\rule{0cm}{0.4cm}\\ 
+
+        &\indent The Prairie Moon\\ 
+
+
+& \bf{Saturday, February 4, 2012}  \rule{0cm}{0.7cm}\\ 
+
+\hline
+10:15 am& Meet in hotel lobby to take elevated train downtown \rule{0cm}{0.4cm}\\ 
+
+    12:00 pm&Lunch at The Signature Room \rule{0cm}{0.4cm}\\ 
+
+    & 95th floor of the Hancock Building\rule{0cm}{0.4cm}\\ 
+
+    2:00-4:00 pm& Daytime Activities\rule{0cm}{0.4cm}\\ 
+
+    & Whirlyball or Downtown Chicago\\ 
+
+    4:00 pm&Return to Evanston\rule{0cm}{0.4cm}\\ 
+
+    6:45 pm&Dinner and Improv Show with graduate students \rule{0cm}{0.4cm}\\ 
+
+    &\indent Meet in the Hotel Orrington lobby\\ 
+
+\end{tabular}
+
+\end{document}
