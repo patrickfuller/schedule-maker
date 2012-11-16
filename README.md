@@ -6,14 +6,14 @@ recruit-schedule-maker
 A script to optimize recruit-professor meetup schedules over Northwestern Chemical Engineering recruitment weekends.
 
 Usage
-=====
+-----
 
 * Update all the tabs in `schedule_input.xlsx`.
 * Edit the words in `recruit_schedule_template.tex` to say what you want. It looks code-y, but the parts you want to edit should be easy to find.
 * Run the .exe. If that doesn't exist, run `src/main.py`.
 
 For developers
-==============
+--------------
 
 * Python dependencies: `pip install numpy openpyxl`
 * LaTeX dependency: `apt-get install texlive` (replace `apt-get` with `port` or `brew` on mac)
