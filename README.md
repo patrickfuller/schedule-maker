@@ -1,6 +1,7 @@
 #ChBE Recruitment Schedule Maker
-####v1.0 by Peter Winter
-####v2.0 by Patrick Fuller
+
+**v1.0 by Peter Winter**
+**v2.0 by Patrick Fuller**
 
 A script to optimize recruit-professor meetup schedules over Northwestern Chemical Engineering recruitment weekends.
 
