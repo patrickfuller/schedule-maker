@@ -29,8 +29,6 @@ professors = file_io.get_professor_availability()
 overrides = file_io.get_manual_overrides()
 travel_weights = file_io.get_travel_weights()
 
-print travel_weights
-
 # Find recruitless professors and students requesting weird people
 requests = set([professor for recruit in recruits
                for professor in recruit["preferences"]]) - set([None])
