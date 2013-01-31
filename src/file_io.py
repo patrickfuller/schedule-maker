@@ -10,6 +10,9 @@ Initializing works in a few steps:
    Assert that all needed sheets are available.
    Try opening ../recruit_schedule_template.tex.
 
+31 Jan 13 - For some terrible reason I can't figure out, openpyxl occasionally
+loads a bunch of null-valued cells on Macs. Added _unpack() to fix this.
+
 v1.0 - Peter Winter
 v2.0 - Patrick Fuller, patrickfuller@gmail.com, 22 Oct 12
 
@@ -20,6 +23,7 @@ import re
 # Load appropriate library and file on import
 from openpyxl import Workbook
 from openpyxl.reader.excel import load_workbook
+from openpyxl.style import Color, Fill
 wb = load_workbook(filename="../schedule_input.xlsx")
 
 # If a sheet doesn't exist, openpyxl returns null. That's dumb. Throw an error.
@@ -39,9 +43,9 @@ def get_recruit_preferences():
     Returns [{ name: "", preferences: [] }]
     """
     sheet = wb.get_sheet_by_name("Recruit Preferences")
-    return [{"name": "%s %s" % (row[1].value, row[0].value),
-             "preferences": [r.value for r in row[2:]]}
-            for row in sheet.rows[1:]]
+    rows = _unpack(sheet)
+    return [{"name": "%s %s" % (row[1], row[0]), "preferences": row[2:]}
+            for row in rows[1:]]
 
 
 def get_professor_availability():
@@ -50,10 +54,11 @@ def get_professor_availability():
     Returns [{ name: "", cluster: "", is_available: [] }]
     """
     sheet = wb.get_sheet_by_name("Professor Availability")
-    return [{"name": row[0].value,
-             "cluster": row[1].value,
-             "is_available": [r.value in ["Y", "y"] for r in row[2:]]}
-            for row in sheet.rows[1:]]
+    rows = _unpack(sheet)
+    return [{"name": row[0],
+             "cluster": row[1],
+             "is_available": [r in ["Y", "y"] for r in row[2:]]}
+            for row in rows[1:]]
 
 
 def get_manual_overrides():
@@ -62,10 +67,11 @@ def get_manual_overrides():
     Returns [{ "recruit": "", "professor": "", "slot": # }]
     """
     sheet = wb.get_sheet_by_name("Manual Overrides")
-    return [{"recruit": "%s %s" % (row[1].value, row[0].value),
-             "professor": row[2].value,
-             "slot": int(row[3].value)}
-            for row in sheet.rows[1:]]
+    rows = _unpack(sheet)
+    return [{"recruit": "%s %s" % (row[1], row[0]),
+             "professor": row[2],
+             "slot": int(row[3])}
+            for row in rows[1:]]
 
 
 def get_travel_weights():
@@ -73,17 +79,50 @@ def get_travel_weights():
     Gets the travel weight matrix from the .xlsx document
     Returns a nested dict, so d[cluster_1][cluster_2] = weight
     """
+
     sheet = wb.get_sheet_by_name("Travel Weights")
-    columns = [cluster.value for cluster in sheet.rows[0][1:]]
+    rows = _unpack(sheet)
+
+    # Gets clusters from the top row of the sheet
+    columns = rows[0][1:]
 
     # Spelling this out, as a nested dictionary comprehension looks meh and
     # this isn't exactly a speed bottleneck
     weights = {}
-    for row in sheet.rows[1:]:
-        cluster = row[0].value
-        costs = [int(cell.value) for cell in row[1:]]
+    for row in rows[1:]:
+        cluster = row[0]
+        costs = [int(cell) for cell in row[1:]]
         weights[cluster] = {col: cost for col, cost in zip(columns, costs)}
     return weights
+
+
+def read_schedule_xlsx(filepath):
+    """Reads a .xlsx spreadsheet (as defined below) into an object."""
+    wb = load_workbook(filename=filepath)
+    sheet = wb.get_sheet_by_name("Recruit Schedule")
+    rows = _unpack(sheet)
+    return [{"name": r[0], "slots": r[1:]} for r in rows[1:]]
+
+
+def _unpack(sheet):
+    """Removes cells with None values and unpacks Cell objects.
+
+    For some reason, openpyxl's garbage_collect() function doesn't always
+    work. This seems more reliable.
+    """
+
+    # Get highest column. The aptly named sheet.get_highest_row() and
+    # sheet.get_highest_column() functions straight up fails on Macs.
+    max_column = 0
+    for row in sheet.rows:
+        column_index = -1
+        while not row[column_index].value:
+            column_index -= 1
+        column_index = len(row) + column_index + 1
+        if max_column < column_index:
+            max_column = column_index
+
+    return [[r.value for r in row[:max_column]] for row in sheet.rows]
 
 
 def write_schedule_xlsx(professors, recruits, filepath):
@@ -110,6 +149,25 @@ def write_schedule_xlsx(professors, recruits, filepath):
     for recruit in recruits:
         ws.append([recruit["name"]] + recruit["slots"])
 
+    # Color cells according to whether or not it fulfills a recruit request
+    for row in ws.rows[1:]:
+        for recruit in recruits:
+            if recruit["name"] == row[0].value:
+                break
+        for cell in row[1:]:
+            cell.style.fill.fill_type = Fill.FILL_SOLID
+
+            # These colors are hideous, but I'm sick of openpyxl and don't want
+            # to figure out its arbitrary Color constructor
+            if not cell.value:
+                color = Color.DARKYELLOW
+            elif cell.value in recruit["preferences"]:
+                color = Color.DARKGREEN
+            else:
+                color = Color.DARKRED
+
+            cell.style.fill.start_color.index = color
+
     # Make a final sheet showing recruit clusters (helps w/ assigning runners)
     ws = wb.create_sheet(index=0, title="Recruit Clusters")
     ws.append(header)
@@ -124,36 +182,32 @@ def write_schedule_xlsx(professors, recruits, filepath):
     wb.save(filepath)
 
 
-def write_tex_file(recruit, filepath, panel_activity_first):
+def write_tex_file(recruit, filepath):
     """Writes a .tex file containing a recruit's schedule."""
-    # Copy the template object
+
+    # Copy the template object so we don't have to deal with re-reading files
     tex = tex_template[:]
 
     # Define replacement logic with a closure
-    def tex_repl(match, panel_activity_first):
+    def tex_repl(match):
         """Uses python.re's MatchObject to parse patterns."""
         flag = match.group()[2:-1]
-        # The name flag is easy enough
+
         if flag == "name":
             return recruit["name"]
-        # All other flags come with numbers attached
+
+        # If it's a slot, extract the number and use it to find a professor
         flag, num = flag.split("_")
         num = int(num) - 1
-        # If it's an activity, it's Panel or MRSEC.
-        if flag == "activity":
-            # If (False, 1) or (True, 2), return MRSEC. Otherwise, panel
-            return ("Tour of MRSEC" if panel_activity_first == num else
-                    "Graduate Student Panel Discussion")
-        # If it's a slot, extract the number and return that
-        elif flag == "slot":
+        if flag == "slot":
             prof = recruit["slots"][num]
             return "Meet with Professor " + prof if prof else "Poster session"
+
         # Exceptions for the assholes
-        raise Exception("A given $(*) .tex flag is not supported!")
+        raise Exception("A given #(*) .tex flag is not supported!")
 
     # Iterate through and replace flags
-    # This regex is saying "$(*)" with a lot of escaped characters
-    tex = re.sub("\$\(\w+\)", lambda s: tex_repl(s, panel_activity_first), tex)
+    tex = re.sub("#\(\w+\)", tex_repl, tex)
 
     with open(filepath, 'w') as outfile:
         outfile.write(tex)

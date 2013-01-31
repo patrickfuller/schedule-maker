@@ -3,18 +3,17 @@
 % However, I've doctored the .tex reader a bit to work with the generated
 % Python data structures.
 %
-%  $(`name`) will place the recruit's name
-%  $(`slot_#`) where `#` is an int, will place the professor they're meeting
-%  $(`activity_#`), where `#` is 1 or 2, will place MRSEC or Student Panel
+%  #(name) will place the recruit's name
+%  #(slot_#) where `#` is an int, will place the professor they're meeting
 % 
 % v1.0 - Peter Winter
-% v2.0 - Patrick Fuller, patrickfuller@gmail.com, 22 Oct 12
+% v2.0 - Patrick Fuller, patrickfuller@gmail.com, 31 Jan 13
 
-\documentclass[7pt]{article}
+\documentclass{article}
 
 \usepackage[T1]{fontenc}
 \usepackage[scaled]{helvet}
-\renewcommand*\familydefault{\sfdefault} %% Only if the base font of the document is to be sans serif
+\renewcommand*\familydefault{\sfdefault}
 
 \usepackage{graphicx}
 
@@ -22,120 +21,114 @@
 
 \usepackage[margin=0.2in,letterpaper]{geometry}
 
-
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 
-\fancyhead{} % Clear all header fields 
-\fancyhead[l]{\setlength{\unitlength}{1mm}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\fancyhead[l]{
+\setlength{\unitlength}{1mm}
 \begin{picture}(0,38)
-\put(0,0){\includegraphics[height=73pt]{../chbeheader.jpg}}% 
-\end{picture}}
-
-\fancyfoot[c]{\renewcommand{\footrulewidth}{0pt}} % Clear all footer fields 
+\put(0,0){\includegraphics[height=73pt]{../chbeheader.jpg}}
+\end{picture}
+}
 
 \headsep = 1.4in
 
 \begin{document}
-%egin{table}[c]{columns}
-% \bf{Prospective Graduate Student Visit}
 
-\vspace*{0.5\baselineskip}
-\bf{\huge{$(name)}} 
+\vspace*{0.25\baselineskip}
+\textbf{\LARGE{#(name)}}
+\vspace*{0.25\baselineskip}
 
-\begin{tabular}[8cm]{ r   l }
-& \bf{Friday, February 3, 2012}  \\ 
+\centerline{\textbf{Friday, February 8 / 15, 2013}}
+\vspace*{0.25\baselineskip}
+\hrule
+\vspace*{0.25\baselineskip}
 
-\hline
-\indent \indent \indent \indent  \indent \indent \indent \indent 8:15 am &Meet in hotel lobby for ride to campus \rule{0cm}{0.3cm}  \indent \indent \indent \indent \indent \indent \indent\\ 
-8:30 am &Breakfast in Cook 2058 \rule{0cm}{0.4cm}\\ 
-9:00-9:05 am& Meet Department Chair \rule{0cm}{0.4cm}\\ 
+\hspace{4.6cm}
+\begin{tabular}{ r    l }
 
-&     \indent Professor and Chair Linda Broadbelt  \\ 
+8:15 am         & Meet in hotel lobby for ride to campus \rule{0cm}{0.5cm} \\
 
-9:05-9:20 am&Graduate Program Overview \rule{0cm}{0.4cm}\\ 
+8:30 am         & Breakfast in Cook 2058 \rule{0cm}{0.4cm} \\ 
 
-     & \indent Professor Luis Amaral \rule{0cm}{0.4cm} \\ 
+9:00-9:05 am    & Meet Department Chair \rule{0cm}{0.4cm} \\ 
+                & \hspace{5mm} Professor and Chair Linda Broadbelt \\ 
 
-9:20-10:00 am &Cutting Edge Research\\ 
+9:05-9:20 am    & Graduate Program Overview \rule{0cm}{0.4cm} \\ 
+                & \hspace{5mm} Professor Luis Amaral \\ 
 
-     & \indent Professor Josh Leonard \\ 
+9:20-10:10 am   & Cutting Edge Research \rule{0cm}{0.4cm} \\ 
+                & \hspace{5mm} \textit{Biotechnology} - Professor Josh Leonard \\ 
+                & \hspace{5mm} \textit{Chemicals and Materials} - Professor Randy Snurr \\
 
-         & \indent \indent \emph{Biotechnology} \rule{0cm}{0.4cm} \\ 
+10:15-10:40 am  & #(slot_1) \rule{0cm}{0.4cm} \\ 
 
-     & \indent Professor Justin Notestein \\ 
+10:45-11:10 am  & #(slot_2) \rule{0cm}{0.4cm} \\ 
 
-         & \indent \indent \emph{Chemicals and Materials}\\ 
+11:15-11:40 am  & #(slot_3) \rule{0cm}{0.4cm} \\ 
 
-     
-10:00-10:10 am& Career Development \rule{0cm}{0.4cm}\\ 
+11:45 am        & Meet in Tech E133 to go to lunch \rule{0cm}{0.4cm} \\ 
 
-&     \indent Chris Evans \\ 
+12:00-1:00 pm   & Lunch \rule{0cm}{0.4cm} \\ 
 
-&\indent \indent Teaching Apprenticeship Program \\ 
+1:15-1:40 pm    & #(slot_4) \rule{0cm}{0.4cm} \\ 
 
-10:15-10:40 am & $(slot_1) \rule{0cm}{0.4cm}\\ 
-
-10:45-11:10 am & $(slot_2) \rule{0cm}{0.4cm}\\ 
-
-11:15-11:40 am & $(slot_3) \rule{0cm}{0.4cm}\\ 
-
-11:45 am & Meet in Tech E133 to go to lunch \rule{0cm}{0.4cm}\\ 
-
-12:00-1:00 pm & Lunch \rule{0cm}{0.4cm}\\ 
-
-1:15-1:40 pm & $(slot_4) \rule{0cm}{0.4cm}\\ 
-
- 1:45-2:10 pm & $(slot_5) \rule{0cm}{0.4cm}\\ 
+1:45-2:10 pm    & #(slot_5) \rule{0cm}{0.4cm} \\ 
  
-2:15-2:40 pm & $(slot_6) \rule{0cm}{0.4cm}\\ 
+2:15-2:40 pm    & #(slot_6) \rule{0cm}{0.4cm} \\ 
 
-2:15-2:40 pm & $(slot_7) \rule{0cm}{0.4cm}\\ 
+2:45 pm         & Meet in Tech L324 \rule{0cm}{0.4cm} \\
 
-2:45-3:10 pm & $(activity_1) \rule{0cm}{0.4cm}\\ 
+2:50-3:00 pm    & Campus Programs \rule{0cm}{0.4cm} \\ 
+                & \hspace{5mm} CLIMB \\ 
 
-3:15-3:40 pm & $(activity_2) \rule{0cm}{0.4cm}\\ 
+3:00-3:10 pm    & Kellogg Management for Scientists and Engineers \rule{0cm}{0.4cm} \\ 
+                & \hspace{5mm} Pria Young \\ 
 
-3:45-3:55 pm &Campus Programs\rule{0cm}{0.4cm}\\ 
+3:10-3:20 pm    & Research Collaboration \rule{0cm}{0.4cm} \\ 
+                & \hspace{5mm} Matthew Moura \\ 
+        
+3:20-3:30 pm    & Career Development \rule{0cm}{0.4cm} \\ 
+                & \hspace{5mm} Chris Evans / Chris Wilmer (depending on weekend) \\
 
-        &\indent CLIMB\\ 
+3:30-4:00 pm    & Graduate Student Panel \rule{0cm}{0.4cm} \\ 
 
-        3:55-4:05 pm &Research Collaboration in Tech L324\rule{0cm}{0.4cm}\\ 
+4:05-4:10 pm    & Wrap-up in Tech E133 \rule{0cm}{0.4cm} \\ 
+                & \hspace{5mm} Professor Luis Amaral \\ 
 
-        &\indent Peter Winter\\ 
+4:15 pm         & Return to Hotel Orrington \rule{0cm}{0.4cm} \\ 
 
-        4:05-4:10 pm& Wrap-up in Tech E133\rule{0cm}{0.4cm}\\ 
+5:45 pm         & Meet in the Hotel Orrington lobby \rule{0cm}{0.4cm} \\ 
 
-        &\indent Professor Luis Amaral\\ 
-
-        4:15 pm&Return to Hotel\rule{0cm}{0.4cm}\\ 
-
-        5:45 pm&Meet in hotel lobby to go to Prairie Moon\rule{0cm}{0.4cm}\\ 
-
-        6:00 pm&Reception and dinner\rule{0cm}{0.4cm}\\ 
-
-        &\indent The Prairie Moon\\ 
-
-
-& \bf{Saturday, February 4, 2012}  \rule{0cm}{0.7cm}\\ 
-
-\hline
-10:15 am& Meet in hotel lobby to take elevated train downtown \rule{0cm}{0.4cm}\\ 
-
-    12:00 pm&Lunch at The Signature Room \rule{0cm}{0.4cm}\\ 
-
-    & 95th floor of the Hancock Building\rule{0cm}{0.4cm}\\ 
-
-    2:00-4:00 pm& Daytime Activities\rule{0cm}{0.4cm}\\ 
-
-    & Whirlyball or Downtown Chicago\\ 
-
-    4:00 pm&Return to Evanston\rule{0cm}{0.4cm}\\ 
-
-    6:45 pm&Dinner and Improv Show with graduate students \rule{0cm}{0.4cm}\\ 
-
-    &\indent Meet in the Hotel Orrington lobby\\ 
+6:00 pm         & Reception and dinner \rule{0cm}{0.4cm} \\
+                & \hspace{5mm} Firehouse \\ 
 
 \end{tabular}
 
+\vspace*{1.5\baselineskip}
+\centerline{\textbf{Saturday, February 9 / 16, 2012}}
+\vspace*{0.25\baselineskip}
+\hrule
+\vspace*{0.25\baselineskip}
+
+\hspace{5cm}
+\begin{tabular}{ r    l }
+
+10:15 am        & Meet in the Hotel Orrington lobby \rule{0cm}{0.6cm} \\ 
+
+12:00 pm        & Lunch at The Signature Room \rule{0cm}{0.4cm} \\ 
+                & \hspace{5mm} 95th floor of the Hancock Building \rule{0cm}{0.4cm} \\ 
+
+2:00-4:00 pm    & Daytime Activities \rule{0cm}{0.4cm} \\ 
+                & \hspace{5mm} Whirlyball or Chicago Art Institute \\ 
+
+4:00 pm         & Return to Evanston \rule{0cm}{0.4cm} \\ 
+
+6:30 pm         & Meet in the Hotel Orrington lobby \rule{0cm}{0.4cm} \\ 
+
+8:00 pm         & Dinner and Second City with graduate students \rule{0cm}{0.4cm} \\
+
+\end{tabular}
 \end{document}

@@ -15,15 +15,25 @@ import subprocess
 import file_io
 import algorithms
 
+import sys
+
+# Give terminal-types the ability to set iterations externally
+iterations = 100
+for i, arg in enumerate(sys.argv):
+    if arg == "--iterations":
+        iterations = int(sys.argv[i + 1])
+
 # All of these read from the input .xlsx file
 recruits = file_io.get_recruit_preferences()
 professors = file_io.get_professor_availability()
 overrides = file_io.get_manual_overrides()
 travel_weights = file_io.get_travel_weights()
 
+print travel_weights
+
 # Find recruitless professors and students requesting weird people
 requests = set([professor for recruit in recruits
-               for professor in recruit["preferences"]])
+               for professor in recruit["preferences"]]) - set([None])
 available = set([professor["name"] for professor in professors])
 
 # Print the professors without recruits and missing requested professors
@@ -50,7 +60,8 @@ for professor in professors:
 # Generate a schuedle. Change here to implement different algorithms.
 algorithm = algorithms.RandomizedAlgorithm(professors, recruits,
                                            travel_weights, overrides)
-professors, recruits = algorithm.run(iterations=100, free_recruit_slots=1)
+professors, recruits = algorithm.run(iterations=iterations,
+                                     free_recruit_slots=1)
 print algorithm.generate_test_results()
 
 # Sort by name for output
@@ -58,34 +69,7 @@ professors.sort(key=lambda p: p["name"])
 recruits.sort(key=lambda r: r["name"].split(' ')[1])
 
 # Write an excel doc containing the schedule
-print("\nGenerating output files...")
+print("\nGenerating output spreadsheet...")
 file_io.write_schedule_xlsx(professors, recruits, "../generated_schedule.xlsx")
-
-# Specify and create a folder for the .tex files
-tex_directory = "../output_latex"
-if not os.path.exists(tex_directory):
-    os.makedirs(tex_directory)
-os.chdir(tex_directory)
-
-# Add .tex files to the folder and subprocess a .pdf converter
-for i, recruit in enumerate(recruits):
-    filepath = "%s.tex" % re.sub(" ", "_", recruit["name"].lower())
-    file_io.write_tex_file(recruit, filepath,
-                           panel_activity_first=(i % 2 == 0))
-    subprocess.call(["pdflatex", "-interaction=batchmode", filepath])
-
-# Clean up the latex-to-pdf mess
-pdf_directory = "../output_pdf"
-if not os.path.exists(pdf_directory):
-    os.makedirs(pdf_directory)
-for filename in os.listdir(tex_directory):
-    filetype = filename.split(".")[-1]
-    # Move .pdfs to their own directory
-    if filetype == "pdf":
-        os.rename("%s/%s" % (os.getcwd(), filename),
-                  "%s/%s/%s" % (os.getcwd(), pdf_directory, filename))
-    # Remove these log files
-    elif filetype in ["aux", "log"]:
-        os.remove("%s/%s" % (os.getcwd(), filename))
 
 print("\nDone!")
