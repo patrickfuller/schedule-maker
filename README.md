@@ -11,8 +11,9 @@ Usage
 * Update all the tabs in `schedule_input.xlsx`.
 * Edit the words in `recruit_schedule_template.tex` to say what you want. It looks code-y, but the parts you want to edit should be easy to find.
 * To generate a "best" schedule, run `schedule_generator.py`. You might need to get a coder friend to explain what that means.
-* Go into the generated .xlsx file and edit as you see fit.
-* When happy with the schedule, run `pdf_generator.py`. Once again, coder friend.
+* Go into the generated .xlsx file and edit the recruit schedule as you see fit. Specifically, look to match up non-requested professors to recruits by research field.
+* After doing this, run `schedule_updater.py` to update the other tabs in the schedule spreadsheet.
+* When happy with the schedule, run `pdf_generator.py` to create fancy schedules for all the recruits.
 
 Dependencies
 ------------
