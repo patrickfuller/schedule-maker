@@ -215,7 +215,7 @@ class RandomizedAlgorithm:
             """Counts the number of open slots in a recruit's schedule."""
             return np.sum(recruit_avail[r, :]) <= free_recruit_slots
 
-        def try_to_book(p, r, s, double_booking=False):
+        def book(p, r, s, double_booking=False):
             """If the slot doesn't conflict, book it by updating arrays."""
             if (both_available(p, r, s, double_booking)
                     and not is_conflict(p, r, s)
@@ -228,36 +228,48 @@ class RandomizedAlgorithm:
                     second_avail[p, s] = False
                 else:
                     prof_avail[p, s] = False
+                return True
+            else:
+                return False
 
         # Round 1: Book overrides
         for p, r, s in self.overrides:
-            try_to_book(p, r, s)
+            book(p, r, s)
 
         # Round 2: Randomly iterate through (professor, recruit, slot) combos
         # and book meetings preferred by recruits
         self._shuffle_iterators()
-        for p, r, s in product(self.prof_ints, self.rec_ints, self.slot_ints):
-            if recruit_prefs[p, r]:
-                try_to_book(p, r, s)
+        for p, s in product(self.prof_ints, self.slot_ints):
+            shuffle(self.rec_ints)
+            for r in self.rec_ints:
+                if recruit_prefs[p, r] and book(p, r, s):
+                    break
 
         # Round 3: Double booking. Go by recruit preferences
         self._shuffle_iterators()
-        for p, r, s in product(self.prof_ints, self.rec_ints, self.slot_ints):
-            if recruit_prefs[p, r]:
-                try_to_book(p, r, s, double_booking=True)
+        for p, s in product(self.prof_ints, self.slot_ints):
+            shuffle(self.rec_ints)
+            for r in self.rec_ints:
+                if recruit_prefs[p, r] and book(p, r, s, double_booking=True):
+                    break
+
+        #self._shuffle_iterators()
+        #for p, r, s in product(self.prof_ints, self.rec_ints, self.slot_ints):
+        #    if recruit_prefs[p, r]:
+        #        book(p, r, s, double_booking=True)
 
         # Round 4: Fill remaining slots randomly, making sure that each recruit
         # has "free_recruit_slots" amount of free slots (for poster sessions)
         self._shuffle_iterators()
         for p, r, s in product(self.prof_ints, self.rec_ints, self.slot_ints):
-            try_to_book(p, r, s)
+            book(p, r, s)
 
         # Round 5: Fill double booking slots until recruits are all full. Play
         # with "free_recruit_slots" to favor poster presentations over more
         # double bookings
         self._shuffle_iterators()
         for p, r, s in product(self.prof_ints, self.rec_ints, self.slot_ints):
-            try_to_book(p, r, s, double_booking=True)
+            book(p, r, s, double_booking=True)
 
         return schedule
 
